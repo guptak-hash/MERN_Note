@@ -63,4 +63,18 @@ const editNote = async (req, res, next) => {
     }
 }
 
-module.exports = { addNote, editNote}
+const getAllNotes=async(req,res,next)=>{
+const userId=req.user.id;
+try{
+    const notes=await NoteModel.find({userId:userId}).sort({isPinned:-1})
+    res.status(200).json({
+        success:true,
+        message:'All notes retrieved successfully',
+        notes
+    })
+}catch(error){
+    next(error);
+}
+}
+
+module.exports = { addNote, editNote, getAllNotes}
