@@ -28,4 +28,39 @@ const addNote = async (req, res, next) => {
     }
 }
 
-module.exports={addNote}
+const editNote = async (req, res, next) => {
+    const note = await NoteModel.findById(req.params.noteId);
+    if (!note) {
+        return next(errorHandler(404, 'Note not found'))
+    }
+    // console.log('req.user.id >> ',req.user.id)
+    // console.log('note.userId >> ',note.userId)
+    const objectId=note.userId;
+    const idString = objectId.toString()
+    if (req.user.id !== idString) {
+        return next(errorHandler(401, 'You can only update your own note'))
+    }
+    const { title, content, tags, isPinned } = req.body;
+    try {
+        if (title) {
+            note.title = title;
+        };
+        if (content) {
+            note.content = content;
+        }
+        if (tags) {
+            note.tags = tags
+        }
+        note.isPinned = isPinned;
+        await note.save();
+        res.status(200).json({
+            success: true,
+            message: 'Note update success',
+            note
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+module.exports = { addNote, editNote}
