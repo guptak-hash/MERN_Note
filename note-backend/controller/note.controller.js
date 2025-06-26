@@ -35,7 +35,7 @@ const editNote = async (req, res, next) => {
     }
     // console.log('req.user.id >> ',req.user.id)
     // console.log('note.userId >> ',note.userId)
-    const objectId=note.userId;
+    const objectId = note.userId;
     const idString = objectId.toString()
     if (req.user.id !== idString) {
         return next(errorHandler(401, 'You can only update your own note'))
@@ -63,18 +63,35 @@ const editNote = async (req, res, next) => {
     }
 }
 
-const getAllNotes=async(req,res,next)=>{
-const userId=req.user.id;
-try{
-    const notes=await NoteModel.find({userId:userId}).sort({isPinned:-1})
-    res.status(200).json({
-        success:true,
-        message:'All notes retrieved successfully',
-        notes
-    })
-}catch(error){
-    next(error);
-}
+const getAllNotes = async (req, res, next) => {
+    const userId = req.user.id;
+    try {
+        const notes = await NoteModel.find({ userId: userId }).sort({ isPinned: -1 })
+        res.status(200).json({
+            success: true,
+            message: 'All notes retrieved successfully',
+            notes
+        })
+    } catch (error) {
+        next(error);
+    }
+};
+
+const deleteNote = async (req, res, next) => {
+    const { noteId } = req.params;
+    const note = await NoteModel.findOne({ _id: noteId, userId: req.user.id });
+    if (!note) {
+        return next(errorHandler(404, 'Note not found'))
+    };
+    try {
+        await NoteModel.deleteOne({ _id: noteId, userId: req.user.id });
+        res.status(200).json({
+            success: true,
+            message: 'Note deleted successfully',
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
-module.exports = { addNote, editNote, getAllNotes}
+module.exports = { addNote, editNote, getAllNotes, deleteNote}
