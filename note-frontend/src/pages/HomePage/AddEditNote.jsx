@@ -53,10 +53,13 @@ function AddEditNote({ onClose, noteData, type }) {
                     value={content}
                     onChange={(e) => setContent(e.target.value)}></textarea>
             </div>
-            <div>
+            <div className='mt-3'>
                 <label className='label-input text-red-400 uppercase'>tags</label>
                 <TagInput tags={tags} setTags={setTags}/>
             </div>
+            {
+                error && <p className='text-red-500 text-xs pt-4'>{error}</p>
+            }
             <button className='btn-primary font-medium mt-5 p-3'
                 onClick={handleAddNote}>ADD</button>
         </div>
