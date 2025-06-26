@@ -1,15 +1,20 @@
 import { useState } from "react"
 import PasswordInput from "../components/input/PasswordInput";
-import { Link } from "react-router-dom";
+import { data, Link, useNavigate } from "react-router-dom";
 import { validEmail } from "../utils/helper";
+import { useDispatch } from "react-redux";
+import axios from "axios";
+import { signInFailure, signInStart, signInSuccess } from "../redux/user/userSlice";
 
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const dispatch = useDispatch();
+    const navigate = useNavigate()
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
         if (!validEmail(email)) {
             setError('Please enter a valid email')
@@ -22,6 +27,22 @@ const LoginPage = () => {
         setError('')
 
         // login api
+        try {
+            dispatch(signInStart());
+            const res = await axios.post('http://localhost:8000/api/login',
+                { email, password }, { withCredentials: true });
+                // console.log('res >> ', res.data)
+            if (res.data.success === false) {
+                // console.log('res >> ', res.data)
+                dispatch(signInFailure(res.data.message));
+                return
+            };
+            dispatch(signInSuccess(res.data))
+            navigate('/')
+        } catch (error) {
+            console.log(error)
+            dispatch(signInFailure(error.message))
+        }
     }
 
     return (

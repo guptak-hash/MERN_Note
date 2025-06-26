@@ -1,13 +1,14 @@
-import React from 'react'
 import { getInitials } from '../../utils/helper'
+import { useSelector } from 'react-redux'
 
 const ProfileInfo = ({onLogout}) => {
+  const { currentUser } = useSelector((state) => state.user)
   return (
     <div className='flex items-center gap-3'>
         <div className='w-12 h-12 flex items-center justify-center rounded-full
-        text-slate-950 font-medium bg-slate-100'>{getInitials('Jon Snow')}</div>
+        text-slate-950 font-medium bg-slate-100'>{getInitials(currentUser?.user?.username)}</div>
         <div>
-            <p className='text-sm font-medium'>Jon</p>
+            <p className='text-sm font-medium'>{currentUser?.user?.username}</p>
         </div>
         <button className='text-sm bg-red-500 p-1 rounded-md text-white 
         hover:opacity-80' onClick={onLogout}>Logout</button>

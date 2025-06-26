@@ -2,9 +2,14 @@ import SearchBar from './SearchBar/SearchBar'
 import ProfileInfo from './ProfileInfo/ProfileInfo'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { signOutStart, signOutFailure, signOutSuccess} from '../redux/user/userSlice'
+import axios from 'axios'
 
 const Navbar = () => {
+    const { currentUser } = useSelector((state) => state.user)
     const [searchQuery, setSearchQuery] = useState('')
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     function handleSearch(e) {
         e.preventDefault()
@@ -14,9 +19,24 @@ const Navbar = () => {
         e.preventDefault()
         setSearchQuery('')
     }
-
-    const onLogout = () => {
-        navigate('/login')
+console.log('navbar currentUser >> ',currentUser)
+    const onLogout = async () => {
+        try {
+            dispatch(signOutStart())
+            const res = await axios.post('http://localhost:8000/api/logout',{},
+                { withCredentials: true }
+            );
+            // console.log('res_signout >> ', res.data)
+            if (res.data.success == false) {
+                dispatch(signOutFailure(res.data.message))
+                return
+            }
+            dispatch(signOutSuccess())
+            navigate('/login')
+        } catch (error) {
+            console.log(error)
+            dispatch(signOutFailure(error.message))
+        }
     }
     return (
         <div className='bg-white flex items-center justify-between px-6 py-2 drop-shadow'>
@@ -24,12 +44,15 @@ const Navbar = () => {
                 <span className='text-slate-500'>Good</span>
                 <span className='text-slate-900'>Notes</span>
             </h2></Link>
-           
-            <SearchBar value={searchQuery}
+
+            {currentUser && (
+                <>
+                <SearchBar value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 handleSearch={handleSearch}
                 onClearSearch={onClearSearch} />
             <ProfileInfo onLogout={onLogout} />
+            </>)}
         </div>
     )
 }
