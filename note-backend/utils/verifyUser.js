@@ -1,6 +1,6 @@
 require('dotenv').config()
 const errorHandler = require("./error");
-const jwt = require('jwt')
+const jwt = require('jsonwebtoken');
 
 const verifyToken=(req,res,next)=>{
     const token=req.cookies.access_token;

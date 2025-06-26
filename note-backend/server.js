@@ -1,9 +1,14 @@
 require('dotenv').config()
 const express=require('express');
+const noteRouter = require('./routes/note.routes');
+const authRouter = require('./routes/auth.routes');
 const connectDB = require('./config/db');
+
+
 const cors=require('cors');
-const router = require('./routes/auth.routes');
-const cookieParser = require('cookie-parser')
+
+const cookieParser = require('cookie-parser');
+
 
 connectDB()
 
@@ -14,7 +19,9 @@ app.use(cors({origin:'*'}))
 app.use(express.json());
 app.use(cookieParser())
 
-app.use('/api',router)
+app.use('/api',authRouter);
+
+app.use('/api',noteRouter)
 
 app.use('/test',(req,res)=>{
     res.status(200).json({msg: 'Test route'})
