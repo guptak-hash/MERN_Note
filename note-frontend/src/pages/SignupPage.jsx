@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import PasswordInput from '../components/input/PasswordInput';
 import { validEmail } from '../utils/helper';
-import axios from 'axios';
+import api from '../api/axiosConfig';
 
 const SignupPage = () => {
     const [name, setName] = useState('')
@@ -28,12 +28,7 @@ console.log('name >> ',name)
         setError('')
         // signup api
         try {
-            const res = await axios.post('https://mern-note-backend-v5wx.onrender.com/api/signup',
-                { username: name, email, password },
-                { withCredentials: true,  headers: {
-                    'Content-Type': 'application/json'
-                } }
-            );
+            const res = await api.post('/api/signup',{ username: name, email, password });
             if (res.data.success === false) {
                 setError(res.data.message);
                 return

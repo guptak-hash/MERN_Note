@@ -5,7 +5,7 @@ import Modal from 'react-modal'
 import AddEditNote from "./AddEditNote"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import axios from "axios"
+import api from "../../api/axiosConfig"
 import { toast } from "react-toastify"
 import EmpthyCard from "./EmpthyCard"
 import emptyNote from '../../assets/emptyNote.webp'
@@ -46,12 +46,7 @@ function HomePage() {
 
     const onPinNote = async (id) => {
         try {
-            const res = await axios.patch('https://mern-note-backend-v5wx.onrender.com/api/note' + id,
-                { isPinned: 'hello' },
-                { withCredentials: true,  headers: {
-                    'Content-Type': 'application/json'
-                } }
-            );
+            const res = await api.patch('/api/note' + id, { isPinned: 'hello' });
             if (res.data.success === false) {
                 // toast.error(res.data.message)
                 setError(res.data.message);
@@ -66,11 +61,7 @@ function HomePage() {
 
     const handleDelete = async (id) => {
         try {
-            const res = await axios.delete('http://localhost:8000/api/note/' + id,
-                { withCredentials: true,  headers: {
-                    'Content-Type': 'application/json'
-                }}
-            )
+            const res = await api.delete('http://localhost:8000/api/note/' + id)
             if (res.data.success === false) {
                 toast.error(res.data.message)
                 setError(res.data.message);

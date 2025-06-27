@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { MdClose } from 'react-icons/md'
 import TagInput from '../../components/input/TagInput';
-import axios from 'axios';
+import api from '../../api/axiosConfig';
 import { toast } from 'react-toastify';
 
 function AddEditNote({ onClose, noteData, type, getAllNotes }) {
@@ -12,12 +12,7 @@ function AddEditNote({ onClose, noteData, type, getAllNotes }) {
     console.log(' Edit noteData >> ', noteData)
     const editNote = async () => {
         try {
-            const res = await axios.put('https://mern-note-backend-v5wx.onrender.com/api/note'+noteData._id,
-                { title, content, tags },
-                { withCredentials: true,  headers: {
-                    'Content-Type': 'application/json'
-                } }
-            );
+            const res = await api.put('/api/note'+noteData._id,{ title, content, tags });
             if (res.data.success === false) {
                 console.log(res.data.message);
                 setError(res.data.message);
@@ -35,12 +30,7 @@ function AddEditNote({ onClose, noteData, type, getAllNotes }) {
     }
     const addNewNote = async () => {
         try {
-            const res = await axios.post('https://mern-note-backend-v5wx.onrender.com/api/note',
-                { title, content, tags },
-                { withCredentials: true,  headers: {
-                    'Content-Type': 'application/json'
-                } }
-            );
+            const res = await api.post('/api/note', { title, content, tags });
             if (res.data.success === false) {
                 console.log(res.data.message);
                 setError(res.data.message);

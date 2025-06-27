@@ -3,7 +3,7 @@ import PasswordInput from "../components/input/PasswordInput";
 import {  Link, useNavigate } from "react-router-dom";
 import { validEmail } from "../utils/helper";
 import { useDispatch } from "react-redux";
-import axios from "axios";
+import api from "../api/axiosConfig";
 import { signInFailure, signInStart, signInSuccess } from "../redux/user/userSlice";
 import { toast } from "react-toastify";
 
@@ -30,10 +30,8 @@ const LoginPage = () => {
         // login api
         try {
             dispatch(signInStart());
-            const res = await axios.post('https://mern-note-backend-v5wx.onrender.com/api/login',
-                { email, password }, { withCredentials: true,  headers: {
-                    'Content-Type': 'application/json'
-                } });
+            const res = await api.post('/api/login',
+                { email, password });
                 // console.log('res >> ', res.data)
             if (res.data.success === false) {
                 // console.log('res >> ', res.data)

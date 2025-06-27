@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { signOutStart, signOutFailure, signOutSuccess} from '../redux/user/userSlice'
-import axios from 'axios'
+import api from '../api/axiosConfig'
 import { toast } from 'react-toastify'
 
 const Navbar = () => {
@@ -25,13 +25,7 @@ const Navbar = () => {
     const onLogout = async () => {
         try {
             dispatch(signOutStart())
-            const res = await axios.post('https://mern-note-backend-v5wx.onrender.com/api/logout',{},
-                { withCredentials: true,
-                     headers: {
-                    'Content-Type': 'application/json'
-                }
-                }
-            );
+            const res = await api.post('/api/logout',{});
             // console.log('res_signout >> ', res.data)
             if (res.data.success == false) {
                 dispatch(signOutFailure(res.data.message))
