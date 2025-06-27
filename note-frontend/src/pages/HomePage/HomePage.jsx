@@ -12,6 +12,7 @@ function HomePage() {
     const { currentUser, loading, errorDispatch } = useSelector((state) => state.user)
     const navigate = useNavigate()
     const [allNotes, setAllNotes] = useState([])
+     const [error, setError] = useState(null);
     const [openAddEditModal, setOpenAddEditModal] = useState({
         isShown: false,
         type: 'add',
@@ -40,8 +41,25 @@ function HomePage() {
         }
     }
 
-    const handleEdit=(noteDetails)=>{
-        setOpenAddEditModal({isShown: true,type: 'edit',data: noteDetails})
+    const onPinNote = async (id)=>{
+        try {
+            const res = await axios.patch('http://localhost:8000/api/note/' + id,
+                {isPinned:'hello'},
+                { withCredentials: true }
+            );
+            if (res.data.success === false) {
+                return
+                 setError(res.data.message);
+            }
+           getAllNotes()
+        } catch (error) {
+            console.log(error)
+             setError(error.message);
+        }
+    }
+
+    const handleEdit = (noteDetails) => {
+        setOpenAddEditModal({ isShown: true, type: 'edit', data: noteDetails })
     }
 
     // if (loading) return (<p>Loading .......</p>)
@@ -57,8 +75,10 @@ function HomePage() {
                                 tags={note.tags}
                                 title={note.title}
                                 date={note.createdAt}
-                                isPinned={note.isPinned} 
-                                onEdit={()=>handleEdit(note)}/>
+                                isPinned={note.isPinned}
+                                onDelete={()=>{}}
+                                onPinNote={() => onPinNote(note._id)}
+                                onEdit={() => handleEdit(note)} />
                         ))
                     }
                 </div>
