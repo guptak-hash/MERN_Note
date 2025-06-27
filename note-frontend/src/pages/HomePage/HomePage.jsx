@@ -6,6 +6,9 @@ import AddEditNote from "./AddEditNote"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
+import { toast } from "react-toastify"
+import EmpthyCard from "./EmpthyCard"
+import emptyNote from '../../assets/emptyNote.webp'
 
 
 function HomePage() {
@@ -48,8 +51,9 @@ function HomePage() {
                 { withCredentials: true }
             );
             if (res.data.success === false) {
-                return
+                // toast.error(res.data.message)
                 setError(res.data.message);
+                return
             }
             getAllNotes()
         } catch (error) {
@@ -64,12 +68,15 @@ function HomePage() {
                 { withCredentials: true }
             )
             if (res.data.success === false) {
-                return
+                toast.error(res.data.message)
                 setError(res.data.message);
+                return
             }
+            toast.success(res.data.message)
             getAllNotes()
         } catch (error) {
             console.log(error)
+            toast.error(error.message)
             setError(error.message);
         }
     }
@@ -77,11 +84,12 @@ function HomePage() {
         setOpenAddEditModal({ isShown: true, type: 'edit', data: noteDetails })
     }
 
-    // if (loading) return (<p>Loading .......</p>)
+    if (loading) return (<p>Loading .......</p>)
     return (
         <>
             <div className="container mx-auto">
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-8 max-md:m-5">
+                {allNotes.length>0 ? (
+  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-8 max-md:m-5">
                     {
                         allNotes.map(note => (
                             <NoteCard
@@ -97,6 +105,8 @@ function HomePage() {
                         ))
                     }
                 </div>
+                ): <EmpthyCard imgSrc={emptyNote} message={'Ready to capture your idea? Click the "ADD" button to start noting down your thoughts'}/>}
+              
             </div>
             <button className="w-16 h-16 flex items-center justify-center rounded-2xl bg-[#2B85FF]
     hover:bg-blue-600 absolute right-10 bottom-10"

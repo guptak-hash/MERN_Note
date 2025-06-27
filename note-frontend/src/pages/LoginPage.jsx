@@ -1,10 +1,11 @@
 import { useState } from "react"
 import PasswordInput from "../components/input/PasswordInput";
-import { data, Link, useNavigate } from "react-router-dom";
+import {  Link, useNavigate } from "react-router-dom";
 import { validEmail } from "../utils/helper";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { signInFailure, signInStart, signInSuccess } from "../redux/user/userSlice";
+import { toast } from "react-toastify";
 
 
 const LoginPage = () => {
@@ -34,13 +35,16 @@ const LoginPage = () => {
                 // console.log('res >> ', res.data)
             if (res.data.success === false) {
                 // console.log('res >> ', res.data)
+                toast.error(res.data.message)
                 dispatch(signInFailure(res.data.message));
                 return
             };
+            toast.success(res.data.message)
             dispatch(signInSuccess(res.data))
             navigate('/')
         } catch (error) {
             console.log(error)
+            toast.error(error.message)
             dispatch(signInFailure(error.message))
         }
     }
