@@ -5,36 +5,62 @@ import Modal from 'react-modal'
 import AddEditNote from "./AddEditNote"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
+import axios from "axios"
 
 
 function HomePage() {
     const { currentUser, loading, errorDispatch } = useSelector((state) => state.user)
     const navigate = useNavigate()
+    const [allNotes, setAllNotes] = useState([])
     const [openAddEditModal, setOpenAddEditModal] = useState({
         isShown: false,
         type: 'add',
         data: null
     })
-    console.log('HomePage currentUser >> ', currentUser)
+    // console.log('HomePage currentUser >> ', currentUser)
     useEffect(() => {
         if (!currentUser) {
             navigate('/login')
+        } else {
+            getAllNotes()
         }
     }, [])
 
-    if(loading) return (<p>Loading .......</p>)
+    const getAllNotes = async () => {
+        try {
+            const res = await axios.get('http://localhost:8000/api/note', {
+                withCredentials: true
+            });
+            if (res.data.success === false) {
+                return
+            }
+            setAllNotes(res.data.notes)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const handleEdit=(noteDetails)=>{
+        setOpenAddEditModal({isShown: true,type: 'edit',data: noteDetails})
+    }
+
+    // if (loading) return (<p>Loading .......</p>)
     return (
         <>
             <div className="container mx-auto">
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-8 max-md:m-5">
-                    <NoteCard content={'You know nothing Jon Snow'} tags={'GOT'} title={"Jon Snow"} date={'26-June-2025'} />
-                    <NoteCard content={'You know nothing Jon Snow'} tags={'GOT'} title={"Jon Snow"} date={'26-June-2025'} />
-                    <NoteCard content={'You know nothing Jon Snow'} tags={'GOT'} title={"Jon Snow"} date={'26-June-2025'} />
-                    <NoteCard content={'You know nothing Jon Snow'} tags={'GOT'} title={"Jon Snow"} date={'26-June-2025'} />
-                    <NoteCard content={'You know nothing Jon Snow'} tags={'GOT'} title={"Jon Snow"} date={'26-June-2025'} />
-                    <NoteCard content={'You know nothing Jon Snow'} tags={'GOT'} title={"Jon Snow"} date={'26-June-2025'} />
-                    <NoteCard content={'You know nothing Jon Snow'} tags={'GOT'} title={"Jon Snow"} date={'26-June-2025'} />
-                    <NoteCard content={'You know nothing Jon Snow'} tags={'GOT'} title={"Jon Snow"} date={'26-June-2025'} />
+                    {
+                        allNotes.map(note => (
+                            <NoteCard
+                                key={note._id}
+                                content={note.content}
+                                tags={note.tags}
+                                title={note.title}
+                                date={note.createdAt}
+                                isPinned={note.isPinned} 
+                                onEdit={()=>handleEdit(note)}/>
+                        ))
+                    }
                 </div>
             </div>
             <button className="w-16 h-16 flex items-center justify-center rounded-2xl bg-[#2B85FF]
@@ -52,7 +78,8 @@ function HomePage() {
     rounded-md mx-auto mt-14 p-5 overflow-scroll">
                 <AddEditNote onClose={() => setOpenAddEditModal({ isShown: false, type: 'add', data: null })}
                     noteData={openAddEditModal.data}
-                    type={openAddEditModal.type} />
+                    type={openAddEditModal.type}
+                    getAllNotes={getAllNotes} />
             </Modal>
         </>
     )

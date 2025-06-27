@@ -19,7 +19,7 @@ const Navbar = () => {
         e.preventDefault()
         setSearchQuery('')
     }
-console.log('navbar currentUser >> ',currentUser)
+// console.log('navbar currentUser >> ',currentUser)
     const onLogout = async () => {
         try {
             dispatch(signOutStart())

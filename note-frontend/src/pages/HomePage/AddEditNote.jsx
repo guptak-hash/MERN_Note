@@ -1,18 +1,49 @@
 import React, { useState } from 'react'
 import { MdClose } from 'react-icons/md'
 import TagInput from '../../components/input/TagInput';
+import axios from 'axios';
 
-function AddEditNote({ onClose, noteData, type }) {
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
-    const [tags, setTags] = useState([]);
+function AddEditNote({ onClose, noteData, type, getAllNotes }) {
+    const [title, setTitle] = useState(type === 'add' ? '' : noteData?.title || '');
+    const [content, setContent] = useState(type === 'add' ? '' : noteData?.content || '');
+    const [tags, setTags] = useState(type === 'add' ? [] : noteData?.tags || []);
     const [error, setError] = useState(null);
-
+    console.log(' Edit noteData >> ', noteData)
     const editNote = async () => {
-
+        try {
+            const res = await axios.put('http://localhost:8000/api/note/'+noteData._id,
+                { title, content, tags },
+                { withCredentials: true }
+            );
+            if (res.data.success === false) {
+                console.log(res.data.message);
+                setError(res.data.message);
+                return
+            }
+            getAllNotes()
+            onClose()
+        } catch (error) {
+            console.log(error.message)
+            setError(error.message)
+        }
     }
     const addNewNote = async () => {
-
+        try {
+            const res = await axios.post('http://localhost:8000/api/note',
+                { title, content, tags },
+                { withCredentials: true }
+            );
+            if (res.data.success === false) {
+                console.log(res.data.message);
+                setError(res.data.message);
+                return
+            }
+            getAllNotes()
+            onClose()
+        } catch (error) {
+            console.log(error.message)
+            setError(error.message)
+        }
     }
     const handleAddNote = () => {
         if (!title) {
@@ -55,7 +86,7 @@ function AddEditNote({ onClose, noteData, type }) {
             </div>
             <div className='mt-3'>
                 <label className='label-input text-red-400 uppercase'>tags</label>
-                <TagInput tags={tags} setTags={setTags}/>
+                <TagInput tags={tags} setTags={setTags} />
             </div>
             {
                 error && <p className='text-red-500 text-xs pt-4'>{error}</p>

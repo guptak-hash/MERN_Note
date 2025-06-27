@@ -1,30 +1,47 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import PasswordInput from '../components/input/PasswordInput';
 import { validEmail } from '../utils/helper';
+import axios from 'axios';
 
 const SignupPage = () => {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-
-    const handleSignup = (e) => {
+    const navigate = useNavigate()
+console.log('name >> ',name)
+    const handleSignup = async (e) => {
         e.preventDefault()
-        if(!name){
+        if (!name) {
             setError('Please enter name');
             return;
         }
-         if (!validEmail(email)) {
-                    setError('Please enter a valid email')
-                    return;
-                }
-                if (!password) {
-                    setError('Please enter the password');
-                    return
-                };
-                setError('')
+        if (!validEmail(email)) {
+            setError('Please enter a valid email')
+            return;
+        }
+        if (!password) {
+            setError('Please enter the password');
+            return
+        };
+        setError('')
         // signup api
+        try {
+            const res = await axios.post('http://localhost:8000/api/signup',
+                { username: name, email, password },
+                { withCredentials: true }
+            );
+            if (res.data.success === false) {
+                setError(res.data.message);
+                return
+            };
+            setError('');
+            navigate('/login')
+        } catch (error) {
+            console.log(error.message);
+            setError(error.message)
+        }
     }
     return (
         <div className="flex items-center justify-center mt-28">
@@ -34,12 +51,12 @@ const SignupPage = () => {
                     <input type='text'
                         placeholder='Name'
                         className='input-box'
-                        value={email}
+                        value={name}
                         onChange={(e) => setName(e.target.value)} />
                     <input type='text'
                         placeholder='Email'
                         className='input-box'
-                        value={name}
+                        value={email}
                         onChange={(e) => setEmail(e.target.value)} />
                     <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} />
                     {error && <p className="text-red-500 text-sm pb-1">{error}</p>}
