@@ -25,7 +25,7 @@ const Navbar = () => {
     const onLogout = async () => {
         try {
             dispatch(signOutStart())
-            const res = await axios.post('http://localhost:8000/api/logout',{},
+            const res = await axios.post('https://mern-note-backend-v5wx.onrender.com/api/logout',{},
                 { withCredentials: true }
             );
             // console.log('res_signout >> ', res.data)

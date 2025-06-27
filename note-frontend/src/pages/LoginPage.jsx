@@ -30,7 +30,7 @@ const LoginPage = () => {
         // login api
         try {
             dispatch(signInStart());
-            const res = await axios.post('http://localhost:8000/api/login',
+            const res = await axios.post('https://mern-note-backend-v5wx.onrender.com/api/login',
                 { email, password }, { withCredentials: true });
                 // console.log('res >> ', res.data)
             if (res.data.success === false) {

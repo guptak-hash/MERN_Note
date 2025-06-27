@@ -32,7 +32,7 @@ function HomePage() {
 
     const getAllNotes = async () => {
         try {
-            const res = await axios.get('http://localhost:8000/api/note', {
+            const res = await axios.get('https://mern-note-backend-v5wx.onrender.com/api/note', {
                 withCredentials: true
             });
             if (res.data.success === false) {
@@ -46,7 +46,7 @@ function HomePage() {
 
     const onPinNote = async (id) => {
         try {
-            const res = await axios.patch('http://localhost:8000/api/note/' + id,
+            const res = await axios.patch('https://mern-note-backend-v5wx.onrender.com/api/note' + id,
                 { isPinned: 'hello' },
                 { withCredentials: true }
             );

@@ -12,7 +12,7 @@ function AddEditNote({ onClose, noteData, type, getAllNotes }) {
     console.log(' Edit noteData >> ', noteData)
     const editNote = async () => {
         try {
-            const res = await axios.put('http://localhost:8000/api/note/'+noteData._id,
+            const res = await axios.put('https://mern-note-backend-v5wx.onrender.com/api/note'+noteData._id,
                 { title, content, tags },
                 { withCredentials: true }
             );
@@ -33,7 +33,7 @@ function AddEditNote({ onClose, noteData, type, getAllNotes }) {
     }
     const addNewNote = async () => {
         try {
-            const res = await axios.post('http://localhost:8000/api/note',
+            const res = await axios.post('https://mern-note-backend-v5wx.onrender.com/api/note',
                 { title, content, tags },
                 { withCredentials: true }
             );

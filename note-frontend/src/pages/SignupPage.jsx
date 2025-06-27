@@ -28,7 +28,7 @@ console.log('name >> ',name)
         setError('')
         // signup api
         try {
-            const res = await axios.post('http://localhost:8000/api/signup',
+            const res = await axios.post('https://mern-note-backend-v5wx.onrender.com/api/signup',
                 { username: name, email, password },
                 { withCredentials: true }
             );
