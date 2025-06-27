@@ -2,7 +2,7 @@ require('dotenv').config()
 const UserModel = require("../models/user.model");
 const errorHandler = require("../utils/error");
 const bcrypt = require('bcrypt')
-const jwt=require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
 const signup = async (req, res, next) => {
     const { username, email, password } = req.body;
@@ -23,27 +23,39 @@ const signup = async (req, res, next) => {
 
 }
 
-const login=async(req,res,next)=>{
-    const {email,password}=req.body;
-    try{
-        const validUser=await UserModel.findOne({email});
-        if(!validUser){
-            return next(errorHandler(404,'User not found'))
+const login = async (req, res, next) => {
+    const { email, password } = req.body;
+    try {
+        const validUser = await UserModel.findOne({ email });
+        if (!validUser) {
+            return next(errorHandler(404, 'User not found'))
         };
-        const validPassword=await bcrypt.compare(password,validUser.password);
-        if(!validPassword){
-            return next(errorHandler(401,'Wrong credentials.'))
+        const validPassword = await bcrypt.compare(password, validUser.password);
+        if (!validPassword) {
+            return next(errorHandler(401, 'Wrong credentials.'))
         }
-        const token=jwt.sign({id:validUser._id,email:validUser.email},process.env.JWT_SECRET);
-        const {password:pass,...rest}=validUser._doc
-        res.cookie('access_token',token).status(200).json({
-            success:true,
-            message:'Login Successfull!',
-            user:rest
+        const token = jwt.sign({ id: validUser._id, email: validUser.email }, process.env.JWT_SECRET);
+        const { password: pass, ...rest } = validUser._doc
+        res.cookie('access_token', token).status(200).json({
+            success: true,
+            message: 'Login Successfull!',
+            user: rest
         })
-    }catch(error){
+    } catch (error) {
         next(error)
     }
 }
 
-module.exports = {signup,login}
+const logout = async (req, res, next) => {
+    try {
+        res.clearCookie('access_token');
+        res.status(200).json({
+            success: true,
+            message: 'User logged out successfully'
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+module.exports = { signup, login, logout}

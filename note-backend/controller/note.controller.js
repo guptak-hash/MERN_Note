@@ -2,7 +2,7 @@ const NoteModel = require("../models/note.model");
 const errorHandler = require("../utils/error");
 
 const addNote = async (req, res, next) => {
-    const { title, content, tags } = req.body;
+    const { title, content, tags, isPinned } = req.body;
     const { id } = req.user;
     if (!title) {
         return next(errorHandler(400, 'Title is required'))
@@ -15,7 +15,8 @@ const addNote = async (req, res, next) => {
             title,
             content,
             tags: tags || [],
-            userId: id
+            userId: id,
+            isPinned: isPinned
         })
         await note.save();
         res.status(201).json({
@@ -51,7 +52,36 @@ const editNote = async (req, res, next) => {
         if (tags) {
             note.tags = tags
         }
-        note.isPinned = isPinned;
+        // note.isPinned = isPinned;
+        await note.save();
+        res.status(200).json({
+            success: true,
+            message: 'Note update success',
+            note
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+const pinToggle = async (req, res, next) => {
+    const note = await NoteModel.findById(req.params.noteId);
+     const objectId = note.userId;
+    const idString = objectId.toString()
+    if (req.user.id !== idString) {
+        return next(errorHandler(401, 'You can only pin your own note'))
+    }
+    const { isPinned } = req.body;
+    if (!note) {
+        return next(errorHandler(404, 'Note not found'))
+    }
+    try {
+        if (note.isPinned) {
+            note.isPinned = false;
+        } else {
+            note.isPinned = true;
+        }
+        // note.isPinned = isPinned;
         await note.save();
         res.status(200).json({
             success: true,
@@ -94,4 +124,4 @@ const deleteNote = async (req, res, next) => {
     }
 }
 
-module.exports = { addNote, editNote, getAllNotes, deleteNote}
+module.exports = { addNote, editNote, getAllNotes, deleteNote, pinToggle }
