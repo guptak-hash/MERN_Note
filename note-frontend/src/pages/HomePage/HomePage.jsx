@@ -16,6 +16,7 @@ function HomePage() {
     const navigate = useNavigate()
     const [allNotes, setAllNotes] = useState([])
     const [error, setError] = useState(null);
+    const [count,setCount] = useState(true)
     const [openAddEditModal, setOpenAddEditModal] = useState({
         isShown: false,
         type: 'add',
@@ -28,7 +29,7 @@ function HomePage() {
         } else {
             getAllNotes()
         }
-    }, [])
+    }, [count])
 
     const getAllNotes = async () => {
         try {
@@ -51,6 +52,7 @@ function HomePage() {
                 return
             }
             getAllNotes()
+            setCount(!count)
         } catch (error) {
             console.log(error)
             setError(error.message);
