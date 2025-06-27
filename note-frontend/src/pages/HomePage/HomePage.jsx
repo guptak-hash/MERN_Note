@@ -12,7 +12,7 @@ function HomePage() {
     const { currentUser, loading, errorDispatch } = useSelector((state) => state.user)
     const navigate = useNavigate()
     const [allNotes, setAllNotes] = useState([])
-     const [error, setError] = useState(null);
+    const [error, setError] = useState(null);
     const [openAddEditModal, setOpenAddEditModal] = useState({
         isShown: false,
         type: 'add',
@@ -41,23 +41,38 @@ function HomePage() {
         }
     }
 
-    const onPinNote = async (id)=>{
+    const onPinNote = async (id) => {
         try {
             const res = await axios.patch('http://localhost:8000/api/note/' + id,
-                {isPinned:'hello'},
+                { isPinned: 'hello' },
                 { withCredentials: true }
             );
             if (res.data.success === false) {
                 return
-                 setError(res.data.message);
+                setError(res.data.message);
             }
-           getAllNotes()
+            getAllNotes()
         } catch (error) {
             console.log(error)
-             setError(error.message);
+            setError(error.message);
         }
     }
 
+    const handleDelete = async (id) => {
+        try {
+            const res = await axios.delete('http://localhost:8000/api/note/' + id,
+                { withCredentials: true }
+            )
+            if (res.data.success === false) {
+                return
+                setError(res.data.message);
+            }
+            getAllNotes()
+        } catch (error) {
+            console.log(error)
+            setError(error.message);
+        }
+    }
     const handleEdit = (noteDetails) => {
         setOpenAddEditModal({ isShown: true, type: 'edit', data: noteDetails })
     }
@@ -76,7 +91,7 @@ function HomePage() {
                                 title={note.title}
                                 date={note.createdAt}
                                 isPinned={note.isPinned}
-                                onDelete={()=>{}}
+                                onDelete={() => handleDelete(note._id)}
                                 onPinNote={() => onPinNote(note._id)}
                                 onEdit={() => handleEdit(note)} />
                         ))
