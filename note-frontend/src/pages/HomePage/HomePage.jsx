@@ -32,9 +32,7 @@ function HomePage() {
 
     const getAllNotes = async () => {
         try {
-            const res = await axios.get('https://mern-note-backend-v5wx.onrender.com/api/note', {
-                withCredentials: true
-            });
+            const res = await api.get('/api/note');
             if (res.data.success === false) {
                 return
             }
@@ -61,7 +59,7 @@ function HomePage() {
 
     const handleDelete = async (id) => {
         try {
-            const res = await api.delete('http://localhost:8000/api/note/' + id)
+            const res = await api.delete('/note/' + id)
             if (res.data.success === false) {
                 toast.error(res.data.message)
                 setError(res.data.message);
