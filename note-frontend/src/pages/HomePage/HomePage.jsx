@@ -44,7 +44,7 @@ function HomePage() {
 
     const onPinNote = async (id) => {
         try {
-            const res = await api.patch('/api/note' + id, { isPinned: 'hello' });
+            const res = await api.patch('/api/note/' + id, { isPinned: 'hello' });
             if (res.data.success === false) {
                 // toast.error(res.data.message)
                 setError(res.data.message);

@@ -12,7 +12,7 @@ function AddEditNote({ onClose, noteData, type, getAllNotes }) {
     console.log(' Edit noteData >> ', noteData)
     const editNote = async () => {
         try {
-            const res = await api.put('/api/note'+noteData._id,{ title, content, tags });
+            const res = await api.put('/api/note/'+noteData._id,{ title, content, tags });
             if (res.data.success === false) {
                 console.log(res.data.message);
                 setError(res.data.message);
