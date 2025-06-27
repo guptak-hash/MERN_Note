@@ -30,7 +30,9 @@ console.log('name >> ',name)
         try {
             const res = await axios.post('https://mern-note-backend-v5wx.onrender.com/api/signup',
                 { username: name, email, password },
-                { withCredentials: true }
+                { withCredentials: true,  headers: {
+                    'Content-Type': 'application/json'
+                } }
             );
             if (res.data.success === false) {
                 setError(res.data.message);

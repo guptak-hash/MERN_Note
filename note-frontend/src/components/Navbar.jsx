@@ -26,7 +26,11 @@ const Navbar = () => {
         try {
             dispatch(signOutStart())
             const res = await axios.post('https://mern-note-backend-v5wx.onrender.com/api/logout',{},
-                { withCredentials: true }
+                { withCredentials: true,
+                     headers: {
+                    'Content-Type': 'application/json'
+                }
+                }
             );
             // console.log('res_signout >> ', res.data)
             if (res.data.success == false) {

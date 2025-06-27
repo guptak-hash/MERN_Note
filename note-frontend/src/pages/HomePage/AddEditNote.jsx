@@ -14,7 +14,9 @@ function AddEditNote({ onClose, noteData, type, getAllNotes }) {
         try {
             const res = await axios.put('https://mern-note-backend-v5wx.onrender.com/api/note'+noteData._id,
                 { title, content, tags },
-                { withCredentials: true }
+                { withCredentials: true,  headers: {
+                    'Content-Type': 'application/json'
+                } }
             );
             if (res.data.success === false) {
                 console.log(res.data.message);
@@ -35,7 +37,9 @@ function AddEditNote({ onClose, noteData, type, getAllNotes }) {
         try {
             const res = await axios.post('https://mern-note-backend-v5wx.onrender.com/api/note',
                 { title, content, tags },
-                { withCredentials: true }
+                { withCredentials: true,  headers: {
+                    'Content-Type': 'application/json'
+                } }
             );
             if (res.data.success === false) {
                 console.log(res.data.message);

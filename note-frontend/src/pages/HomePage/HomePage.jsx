@@ -48,7 +48,9 @@ function HomePage() {
         try {
             const res = await axios.patch('https://mern-note-backend-v5wx.onrender.com/api/note' + id,
                 { isPinned: 'hello' },
-                { withCredentials: true }
+                { withCredentials: true,  headers: {
+                    'Content-Type': 'application/json'
+                } }
             );
             if (res.data.success === false) {
                 // toast.error(res.data.message)
@@ -65,7 +67,9 @@ function HomePage() {
     const handleDelete = async (id) => {
         try {
             const res = await axios.delete('http://localhost:8000/api/note/' + id,
-                { withCredentials: true }
+                { withCredentials: true,  headers: {
+                    'Content-Type': 'application/json'
+                }}
             )
             if (res.data.success === false) {
                 toast.error(res.data.message)
