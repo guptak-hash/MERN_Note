@@ -17,7 +17,9 @@ const app=express();
 app.use(cors({origin: [
     'http://localhost:5173', 
     'https://mern-note-frontend-fnpu.onrender.com'
-  ],credentials:true}))
+  ],
+  methods: ['GET','POST','PUT','PATCH','DELETE'],
+  credentials:true}))
 
 app.use(express.json());
 app.use(cookieParser())

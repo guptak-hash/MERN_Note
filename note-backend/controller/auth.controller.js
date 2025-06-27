@@ -36,7 +36,13 @@ const login = async (req, res, next) => {
         }
         const token = jwt.sign({ id: validUser._id, email: validUser.email }, process.env.JWT_SECRET);
         const { password: pass, ...rest } = validUser._doc
-        res.cookie('access_token', token).status(200).json({
+        res.cookie('access_token', token,{
+    httpOnly: true,
+    secure: true,
+    sameSite: 'None',
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    path: '/'
+}).status(200).json({
             success: true,
             message: 'Login Successfull!',
             user: rest
@@ -48,7 +54,12 @@ const login = async (req, res, next) => {
 
 const logout = async (req, res, next) => {
     try {
-        res.clearCookie('access_token');
+        res.clearCookie('access_token',{
+            httpOnly: true,
+            secure: true,
+            sameSite: 'None',
+            path: '/'
+        });
         res.status(200).json({
             success: true,
             message: 'User logged out successfully'
