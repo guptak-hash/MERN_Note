@@ -66,7 +66,7 @@ const editNote = async (req, res, next) => {
 
 const pinToggle = async (req, res, next) => {
     const note = await NoteModel.findById(req.params.noteId);
-     const objectId = note.userId;
+    const objectId = note.userId;
     const idString = objectId.toString()
     if (req.user.id !== idString) {
         return next(errorHandler(401, 'You can only pin your own note'))
@@ -124,4 +124,30 @@ const deleteNote = async (req, res, next) => {
     }
 }
 
-module.exports = { addNote, editNote, getAllNotes, deleteNote, pinToggle }
+const searchNote = async (req, res, next) => {
+    const { query } = req.query;
+    if (!query) {
+        return next(errorHandler(400, 'Search query is required'))
+    }
+
+    try {
+        const matchingNotes = await NoteModel.find({
+            userId: req.user.id,
+            $or: [
+                { title: { $regex: new RegExp(query, 'i') } },       // Search in title (case-insensitive)
+                { content: { $regex: new RegExp(query, 'i') } },     // Search in content (case-insensitive)
+                { tags: { $in: [new RegExp(query, 'i')] } }          // Search in tags array (case-insensitive)
+            ]
+        });
+
+        res.status(200).json({
+            success:true,
+            message: 'Notes matching the search query',
+            notes:matchingNotes
+        })
+    }catch (error) {
+        next(error)
+    }
+}
+
+module.exports = { addNote, editNote, getAllNotes, deleteNote, pinToggle, searchNote}
