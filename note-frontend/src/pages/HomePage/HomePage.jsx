@@ -61,7 +61,7 @@ function HomePage() {
 
     const handleDelete = async (id) => {
         try {
-            const res = await api.delete('/note/' + id)
+            const res = await api.delete('/api/note/' + id)
             if (res.data.success === false) {
                 toast.error(res.data.message)
                 setError(res.data.message);
